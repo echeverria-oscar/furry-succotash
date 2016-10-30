@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>User Qoutes</title>
+  </head>
+  <body>
+    {% if messages %}
+  <ul class = "messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class = "{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+    <h2>Welcome, {{me.alias}}!</h2>
+    <h3><a href="/logout">logout</a></h3>
+
+    <h3>Quatable Quotes</h3>
+    <div class="quotes-scroll">
+      {% for quote in quotes %}
+      <h4>Quote By: {{quote.quoted_by}}<br>
+        Quote: {{quote.quote}}<br></h4>
+        <p><a href="/add_favorites/{{quote.id}}">Add to My List</a></p>
+      <!-- <form class="favorit" action="/favorites/{{quote.id}}" method="post">
+        <input type="submit" value="Add to My List"> -->
+      <!-- </form> -->
+
+      <p>Posted by: <a href="/profile/{{quote.user.id}}">{{quote.user.alias}}</a></p>
+
+      {% endfor %}
+
+
+    </div>
+    <h3>Contribute a Quote:</h3>
+      <form id="quote_area" action="/add_qoute" method="post">
+        {% csrf_token %}
+          <p>Quoted By: <input type="text" name="quoted_by"></p>
+          <p>Message: <textarea name="quote" form="quote_area" rows="8" cols="40"></textarea></p>
+          <input type="submit" value="Submit">
+      </form>
+
+      <h2>Favorites:</h2>
+      {% for favorite in favorites %}
+      <div class="quotes-scroll">
+        <h4>Quote By: {{favorite.quoted_by}}<br>
+          Quote: {{favorite.quote}}<br></h4>
+          <p><a href="/remove_favorites/{{favorite.id}}">Remove From My list</a></p>
+        <!-- <form class="favorit" action="/favorites/{{quote.id}}" method="post">
+          <input type="submit" value="Add to My List"> -->
+        <!-- </form> -->
+
+        <p>Posted by: <a href="/profile/{{favorite.user.id}}">{{favorite.user.alias}}</a></p>
+
+      {% endfor %}
+
+
+  </body>
+</html>
