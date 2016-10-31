@@ -1,2 +1,37 @@
 Public IP
 35.162.55.60
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'second_db',
+        'USER': 'oscar',
+        'PASSWORD': 'coolguys',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+description "Gunicorn application server handling my_sitea"
+start on runlevel [2345]
+stop on runlevel [!2345]
+respawn
+setuid ubuntu
+setgid www-data
+chdir /home/ubuntu/my_sitea
+exec my_sitea_env/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/my_sitea/main.sock main.wsgi:application
+
+server {
+    listen 80;
+    server_name 35.162.55.60;
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/ubuntu/my_sitea;
+    }
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/my_sitea/main.sock;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/my_sitea /etc/nginx/sites-enabled
